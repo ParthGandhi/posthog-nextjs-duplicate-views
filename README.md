@@ -1,3 +1,4 @@
+Bug report: https://github.com/Ismaaa/next-use-posthog/issues/3
 
 ### Problem
 
