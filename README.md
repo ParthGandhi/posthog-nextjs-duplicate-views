@@ -1,34 +1,150 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+### Problem
 
-First, run the development server:
+posthog registers duplicate `pageview` events a few milliseconds apart in some cases.
 
-```bash
-npm run dev
-# or
-yarn dev
+### Build
+
+```
+npm run build
+npm run start -- -p 3005
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### To Reproduce
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+Adding a query param is needed to reproduce this. You may need to refresh a few times to see it.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+1. Visit URL in a browser (adblocker etc disabled): http://localhost:3005/?utm_source=google
+2. See events in posthog
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+### pageview events (PII removed)
 
-## Learn More
+![screenshot](posthog-screenshot.png "screenshot")
 
-To learn more about Next.js, take a look at the following resources:
+```
+{
+    "id": "017d36b5-a2af-0000-380c-ecfd4ec42bf7",
+    "timestamp": "2021-11-19T05:40:10.097000+00:00",
+    "event": "$pageview",
+    "distinct_id": "17d3432fb7ba26-07d854be6a3937-1e396452-13c680-17d3432fb7c16c8",
+    "properties": {
+        "$active_feature_flags": [],
+        "$browser": "Chrome",
+        "$browser_version": 96,
+        "$current_url": "http://localhost:3005/?utm_source=google",
+        "$device_type": "Desktop",
+        "$geoip_city_name": "Hyderabad",
+        "$geoip_continent_code": "AS",
+        "$geoip_continent_name": "Asia",
+        "$geoip_country_code": "IN",
+        "$geoip_country_name": "India",
+        "$geoip_postal_code": "500044",
+        "$geoip_subdivision_1_code": "TG",
+        "$geoip_subdivision_1_name": "Telangana",
+        "$geoip_time_zone": "Asia/Kolkata",
+        "$host": "localhost:3005",
+        "$initial_referrer": "$direct",
+        "$initial_referring_domain": "$direct",
+        "$insert_id": "qpfx9llzqcubwohc",
+        "$lib": "web",
+        "$lib_version": "1.16.0",
+        "$os": "Mac OS X",
+        "$pathname": "/",
+        "$plugins_deferred": [],
+        "$plugins_failed": [],
+        "$plugins_succeeded": [
+            "GeoIP (2676)",
+            "URL Params Parser (Beta) (2906)"
+        ],
+        "$referrer": "$direct",
+        "$referring_domain": "$direct",
+        "$screen_height": 1080,
+        "$screen_width": 1920,
+        "$set": {
+            "utm_source": "google"
+        },
+        "$set_once": {
+            "$initial_os": "Mac OS X",
+            "$initial_browser": "Chrome",
+            "$initial_device_type": "Desktop",
+            "$initial_current_url": "http://localhost:3005/?utm_source=google",
+            "$initial_browser_version": 96,
+            "$initial_utm_source": "google",
+            "$initial_referrer": "$direct",
+            "$initial_referring_domain": "$direct"
+        },
+        "$time": 1637300409.921,
+        "$viewport_height": 976,
+        "$viewport_width": 640,
+        "distinct_id": "17d3432fb7ba26-07d854be6a3937-1e396452-13c680-17d3432fb7c16c8",
+        "token": "phc_W0MyXawfQ5tpYpLdhzVyS2Foxjqym2BI7zdv4SZz4a9",
+        "url_utm_source": "google",
+        "utm_source": "google"
+    },
+    "elements_chain": ""
+}
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```
+{
+    "id": "017d36b5-9906-0000-8035-6e77ffd4064a",
+    "timestamp": "2021-11-19T05:40:10.626000+00:00",
+    "event": "$pageview",
+    "distinct_id": "17d3432fb7ba26-07d854be6a3937-1e396452-13c680-17d3432fb7c16c8",
+    "properties": {
+        "$active_feature_flags": [],
+        "$browser": "Chrome",
+        "$browser_version": 96,
+        "$current_url": "http://localhost:3005/?utm_source=google",
+        "$device_type": "Desktop",
+        "$geoip_city_name": "Hyderabad",
+        "$geoip_continent_code": "AS",
+        "$geoip_continent_name": "Asia",
+        "$geoip_country_code": "IN",
+        "$geoip_country_name": "India",
+        "$geoip_postal_code": "500044",
+        "$geoip_subdivision_1_code": "TG",
+        "$geoip_subdivision_1_name": "Telangana",
+        "$geoip_time_zone": "Asia/Kolkata",
+        "$host": "localhost:3005",
+        "$initial_referrer": "$direct",
+        "$initial_referring_domain": "$direct",
+        "$insert_id": "376o3f9wgqduz72j",
+        "$lib": "web",
+        "$lib_version": "1.16.0",
+        "$os": "Mac OS X",
+        "$pathname": "/",
+        "$plugins_deferred": [],
+        "$plugins_failed": [],
+        "$plugins_succeeded": [
+            "GeoIP (2676)",
+            "URL Params Parser (Beta) (2906)"
+        ],
+        "$referrer": "$direct",
+        "$referring_domain": "$direct",
+        "$screen_height": 1080,
+        "$screen_width": 1920,
+        "$set": {
+            "utm_source": "google"
+        },
+        "$set_once": {
+            "$initial_os": "Mac OS X",
+            "$initial_browser": "Chrome",
+            "$initial_device_type": "Desktop",
+            "$initial_current_url": "http://localhost:3005/?utm_source=google",
+            "$initial_browser_version": 96,
+            "$initial_utm_source": "google",
+            "$initial_referrer": "$direct",
+            "$initial_referring_domain": "$direct"
+        },
+        "$time": 1637300409.918,
+        "$viewport_height": 976,
+        "$viewport_width": 640,
+        "distinct_id": "17d3432fb7ba26-07d854be6a3937-1e396452-13c680-17d3432fb7c16c8",
+        "token": "phc_W0MyXawfQ5tpYpLdhzVyS2Foxjqym2BI7zdv4SZz4a9",
+        "url_utm_source": "google",
+        "utm_source": "google"
+    },
+    "elements_chain": ""
+}
+```
